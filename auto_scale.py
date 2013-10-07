@@ -1,7 +1,7 @@
 #!/usr/bin/python
 
 
-wwwwwwwww
+
 import sys
 import time
 import boto.ec2.elb
