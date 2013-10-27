@@ -9,10 +9,10 @@ def main():
     for num in range(1, 52):
         f = open("week"+str(num)+".csv","a")
         i = 0
-        with open("week"+str(num-1)+".csv", 'rw') as csvfile:
+        with open("week0.csv", 'rw') as csvfile:
             for row in csvfile:
                 try:
-                   value = float(str(row.split(",")[1].strip()))*((1+0.12/52))
+                   value = float(str(row.split(",")[1].strip()))*(1 + 0.12*(float)(num)/52)
                    line = str(i) + "," + str(value)
                    print str(line)+"\n"
                    f.write(str(line)+"\n")
