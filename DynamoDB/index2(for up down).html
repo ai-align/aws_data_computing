@@ -1,0 +1,169 @@
+
+<html>
+<head>
+ <script type="text/javascript" src="https://sdk.amazonaws.com/js/aws-sdk-2.0.0-rc1.min.js"></script>
+ <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
+<script>
+
+
+
+function getImages(str1, str2, str3)
+{
+console.log(str1);
+if (str1=="")
+  {
+  document.getElementById("txtHint").innerHTML="";
+  return;
+  } 
+if (window.XMLHttpRequest)
+  {// code for IE7+, Firefox, Chrome, Opera, Safari
+  xmlhttp=new XMLHttpRequest();
+  }
+else
+  {// code for IE6, IE5
+  xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+  }
+xmlhttp.onreadystatechange=function()
+  {
+  if (xmlhttp.readyState==4 && xmlhttp.status==200)
+    {
+    document.getElementById("txtHint").innerHTML=xmlhttp.responseText;
+    $("#tooltips img[title]").tooltip();
+    }
+  }
+if ( str3=="" || str3=="max #") 
+  {  //not using range
+  xmlhttp.open("GET","getPicture.php?cat="+str1+"&pic="+str2,true);
+  }
+else
+  { //using range
+  xmlhttp.open("GET","getPicture.php?cat="+str1+"&picstart="+str2+"&picend="+str3,true);
+  }
+xmlhttp.send();
+}
+
+$(function() {
+		AWS.config.update({
+			accessKeyId: 'AKIAIUUSLBP7GFHBNSDA', 
+			secretAccessKey: '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'});
+		AWS.config.region = 'us-east-1';
+		var database = new AWS.DynamoDB();
+
+		$('#level0').change(function() {
+			$(this).nextAll('select').remove();
+			database.getItem(params={"TableName":"classify", "Key": {"upclass" :{"S": $(this).val()}} },function (err, data) {
+				if (err) {
+				console.log(err); // an error occurred
+				} else {
+				if (data['Item']['nextclass']['SS'].length > 0) {
+				$('<select id="level1" name="level1"><option value="">-Select Below-</option></select>').insertBefore("#button");
+				$.each(data['Item']['nextclass']['SS'], function(index, obj) {
+					$("#level1").append('<option value='+obj+'>'+obj+'</option>');
+					});
+				$('#level1').change(function() {
+					$(this).nextAll('select').remove();
+					database.getItem(params={"TableName":"classify", "Key": {"upclass" :{"S": $(this).val()}} },function (err, data) {
+						if (err) {
+						console.log(err); // an error occurred
+						} else {
+						if (data['Item']['nextclass']['SS'].length > 0) {
+						$('<select id="level2" name="level2"><option value="">-Select Below-</option></select>').insertBefore("#button");
+						$.each(data['Item']['nextclass']['SS'], function(index, obj) {
+							$("#level2").append('<option value='+obj+'>'+obj+'</option>');
+							});
+						$('#level2').change(function() {
+							$(this).nextAll('select').remove();
+							database.getItem(params={"TableName":"classify", "Key": {"upclass" :{"S": $(this).val()}} },function (err, data) {
+								if (err) {
+								console.log(err); // an error occurred
+								} else {
+								if (data['Item']['nextclass']['SS'].length > 0) {
+								$('<select id="level3" name="level3"><option value="">-Select Below-</option></select>').insertBefore("#button");
+								$.each(data['Item']['nextclass']['SS'], function(index, obj) {
+									$("#level3").append('<option value='+obj+'>'+obj+'</option>');
+									});
+								$('#level3').change(function() {
+									$(this).nextAll('select').remove();
+									database.getItem(params={"TableName":"classify", "Key": {"upclass" :{"S": $(this).val()}} },function (err, data) {	
+										if (err) {
+										console.log(err); // an error occurred
+										} else {
+										if (data['Item']['nextclass']['SS'].length > 0) {
+										$('<select id="leve4" name="leve4"><option value="">-Select Below-</option></select>').insertBefore("#button");
+										$.each(data['Item']['nextclass']['SS'], function(index, obj) {
+											$("#leve4").append('<option value='+obj+'>'+obj+'</option>');
+											});
+										}
+										}
+										});
+									});
+								}
+								}
+							});
+						});
+						}
+						}
+					});
+				});
+				}
+				}
+			});
+
+		});
+       });	
+
+</script>
+
+  <!-- include the tooltip code from http://jquerytools.org/demos/tooltip/ --> 
+  <script src="/jquery.tools.min.js"></script>
+
+  <style>
+    /* tooltip styling. by default the element to be styled is .tooltip  */
+  .tooltip {
+    display:none;
+    background:transparent url(/black_arrow.png); 
+    font-size:16px;
+    height:70px;
+    width:160px;
+    padding:25px;
+    color:#eee;
+  }
+    /* style the trigger elements */
+  #tooltips img {
+    border:0;
+    /* cursor:pointer; */
+    margin:0 1px;
+  }
+  </style>
+
+
+
+</head>
+<body>
+<form id = "bonus">
+<div id ="taxnomy">
+<input type="radio" name="range" value="off" checked onclick="this.form.Picture2.style.visibility='hidden'; this.form.Picture2.value='max #'; " >Single Picture
+<input type="radio" name="range" value="on" onclick="this.form.Picture2.style.visibility='visible';" >Range of Multiple Pictures<br>
+Picture(s)<input type="text" name="Picture1" value="#" size="8"> 
+<input type="text" name="Picture2" style="visibility:hidden" value="max #" size="8"><br>
+
+upclass<select id="level0" name="level0">
+          <option value="">-Select upclass below-</option>
+          <option value="Animate">Animate</option>
+          <option value="Inanimate">Inanimate</option>
+        </select>
+
+<input type="button" id="button" value="Display Image(s)" onclick="getImages(this.form.getElementsByTagName('select')[this.form.getElementsByTagName('select').length-1].value, this.form.Picture1.value, this.form.Picture2.value)" >
+</div>
+</form>
+<br>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<div id="tooltips">
+<div id="txtHint"><b>Enter category and numbers above, then click the button...</b></div>
+</div>
+
+
+</body>
+</html>
+
