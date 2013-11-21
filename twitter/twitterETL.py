@@ -13,6 +13,19 @@ def main():
                 s=i.name
                 break
 
+<<<<<<< Local Changes
+
+for i in set:
+    s=i.name
+    break
+
+s = "http://s3.amazonaws.com/15619twitter/"+s
+response = urllib2.urlopen(s)
+data = response.read().split('\n')
+for i in data
+    ddata = json.loads(i)
+    print ddata['created_at'] + ddata['user']['id']
+=======
         s = "http://s3.amazonaws.com/15619twitter/sample-tweets.20131001-162934.json"
         response = urllib2.urlopen(s)
         tweets = response.read().split('\n')
@@ -32,6 +45,15 @@ def main():
                 else:
                         o_userid = "false"
                 f.write(json.dumps({'userid':userid, 'tid':tid, 'text':text, 'timestamp':timestamp, 'o_userid':o_userid})+'\n')
+>>>>>>> External Changes
 
+<<<<<<< Local Changes
+if __name__=='__main__'：
+    main()=======
 if __name__=='__main__':
+<<<<<<< Local Changes
     main()
+>>>>>>> External Changes
+=======
+    main()
+>>>>>>> External Changes
