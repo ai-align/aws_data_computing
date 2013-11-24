@@ -11,18 +11,19 @@ import org.apache.hadoop.util.*;
 public class NGGramGernerate {
 
     public static class Map extends MapReduceBase implements Mapper<LongWritable, Text, Text, IntWritable> {
-      private final static IntWritable one = new IntWritable(1);
+      
+	  private final static IntWritable one = new IntWritable(1);
       private Text word = new Text();
 
       public void map(LongWritable key, Text value, OutputCollector<Text, IntWritable> output, Reporter reporter) throws IOException {
-        String line = value.toString();
-        String[] words = line.replaceAll("[^a-zA-Z ]", "").toLowerCase().split("\\s+");
-        for (int i = 0; i < words.length; i ++) {
-          String firstword = words[i];
+        String oneline = value.toString();
+        String[] ngrams = oneline.replaceAll("[^a-zA-Z ]", "").toLowerCase().split("\\s+");
+        for (int i = 0; i < ngrams.length; i ++) {
+          String firstword = ngrams[i];
           word.set(firstword);
           output.collect(word, one);
-          for (int j = i+1; j < words.length && j < i+5; j ++) {
-            firstword = firstword +" " + words[j];
+          for (int j = i+1; j < ngrams.length && j < i+5; j ++) {
+            firstword = firstword +" " + ngrams[j];
             word.set(firstword);
             output.collect(word, one);
           }
@@ -42,7 +43,7 @@ public class NGGramGernerate {
 
     public static void main(String[] args) throws Exception {
       JobConf conf = new JobConf(NGGramGernerate.class);
-      conf.setJobName("ngramcount");
+      conf.setJobName("NGGramGernerate");
 
       conf.setOutputKeyClass(Text.class);
       conf.setOutputValueClass(IntWritable.class);
